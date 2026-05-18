@@ -1,6 +1,9 @@
 package ua.university;
 
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Random;
 
 public class Embroidery {
@@ -25,15 +28,38 @@ public class Embroidery {
 
     }
     private void setupCanvas(){
-        canvas = new Color[width][height];
-        for(int i=0; i<width; i++){
-            for(int j=0; j<height; j++){
-                // canvas[i][j] = null;
-                canvas[i][j]=getRandomColor();
+        loadFromFile( "src/main/resources/vyshyvanka_40x20.txt");
+        /*canvas = new Color[width][height];
+        for(int i=0; i<height; i++){
+            for(int j=0; j<width; j++){
+                canvas[i][j] = null;
+
             }
-        }
+        }*/
     }
-    public void loadFromFile(String path){
+    public void loadFromFile(String filePath){
+        canvas = new Color[height][width];
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            int y = 0;
+            while ((line = br.readLine()) != null && y < height) {
+                String[] pixels = line.trim().split(" ");
+                for (int x = 0; x < Math.min(width, pixels.length); x++) {
+                    String[] rgb = pixels[x].split(",");
+                    int r = Integer.parseInt(rgb[0]);
+                    int g = Integer.parseInt(rgb[1]);
+                    int b = Integer.parseInt(rgb[2]);
+                    canvas[y][x] = new Color(r, g, b);
+                }
+                y++;
+            }
+            System.out.println("File Color[" + height + "][" + width + "] was read successfully");
+
+        } catch (IOException e) {
+            System.err.println("File reading error: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.err.println("Wrong format: " + e.getMessage());
+        }
     }
     public void saveToFile(String name){
 
@@ -50,10 +76,10 @@ public class Embroidery {
     private void drawStitches(int startX, int startY,  Graphics2D g2) {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        for(int i=0; i<width; i++){
-            for(int j=0; j<height; j++){
+        for(int i=0; i<height; i++){
+            for(int j=0; j<width; j++){
                 if(canvas[i][j]!=null)
-                    drawStitch(startX+i*stitchSize, startY+j*stitchSize, stitchSize, canvas[i][j], g2);
+                    drawStitch(startX+j*stitchSize, startY+i*stitchSize, stitchSize, canvas[i][j], g2);
             }
         }
     }

@@ -20,7 +20,7 @@ public class AppPanel extends JPanel {
     }
 
     private void setUpCanvas() {
-        embroidery= new Embroidery(30, 25);
+        embroidery= new Embroidery(40, 20);
     }
 
     private void setPanel() {
