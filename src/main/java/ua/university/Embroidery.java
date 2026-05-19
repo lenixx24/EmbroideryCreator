@@ -1,6 +1,7 @@
 package ua.university;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -12,6 +13,8 @@ public class Embroidery {
     public final int DEFAULT_STITCH_SIZE=15;
     public final float BORDER_WIDTH=4;
     public final Color BEIGE = new Color(250, 240, 230);
+    private Color currentColor = Color.RED;
+    private boolean eraserOn=false;
     private int width;
     private int height;
     private int stitchSize;
@@ -98,7 +101,6 @@ public class Embroidery {
             g2.drawLine(x+i*stitchSize, y, x+i*stitchSize, y+height*stitchSize);
         for(int j=0; j<=height; j++)
             g2.drawLine(x, y+j*stitchSize, x+width*stitchSize, y+j*stitchSize);
-
     }
     public void drawStitch(int x, int y, int size, Color color, Graphics g){
         g.setColor(color);
@@ -112,7 +114,14 @@ public class Embroidery {
             case 2 -> Color.WHITE;
             default -> null;
         };
-
+    }
+    public void onClick(MouseEvent e){
+       int col = (e.getX()-(EmbroideryCreator.WIDTH - stitchSize*width)/2)/stitchSize;
+       int row = (e.getY()-(EmbroideryCreator.HEIGHT - stitchSize*height)/2)/stitchSize;
+       System.out.println(row+", "+col);
+       if(col<0||row<0||col>=width||row>=height) return;
+      if(eraserOn) canvas[row][col]=null;
+      else canvas[row][col]=currentColor;
     }
     private Random r = new Random();
 }
