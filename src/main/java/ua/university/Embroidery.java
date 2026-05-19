@@ -8,37 +8,33 @@ import java.io.IOException;
 import java.util.Random;
 
 public class Embroidery {
-    public final int MAX_WIDTH = EmbroideryCreator.WIDTH*3/4;
-    public final int MAX_HEIGHT = EmbroideryCreator.HEIGHT*3/4;
+    private final AppPanel appPanel;
+    public final int MAX_WIDTH = EmbroideryCreator.WIDTH*5/8;
+    public final int MAX_HEIGHT = EmbroideryCreator.HEIGHT*5/8;
     public final int DEFAULT_STITCH_SIZE=15;
     public final float BORDER_WIDTH=4;
     public final Color BEIGE = new Color(250, 240, 230);
     private Color currentColor = Color.RED;
     private boolean eraserOn=false;
+    private boolean enableGrid=true;
     private int width;
     private int height;
     private int stitchSize;
     private int stitchOffset;
     private Color[][] canvas;
-    public Embroidery (int width, int height){
+    public Embroidery (AppPanel appPanel,  int width, int height){
+        this.appPanel=appPanel;
        this.width= width;
        this.height=height;
        // if(width*stitchSize>MAX_WIDTH||height*stitchSize>MAX_HEIGHT)
         stitchSize = width>height? MAX_WIDTH/width: MAX_HEIGHT/height;
-        stitchOffset = (int) (stitchSize*0.2);
+        stitchOffset = (int) (stitchSize*0.25);
         setupCanvas();
 
 
     }
     private void setupCanvas(){
         loadFromFile( "src/main/resources/vyshyvanka_40x20.txt");
-        /*canvas = new Color[width][height];
-        for(int i=0; i<height; i++){
-            for(int j=0; j<width; j++){
-                canvas[i][j] = null;
-
-            }
-        }*/
     }
     public void loadFromFile(String filePath){
         canvas = new Color[height][width];
@@ -72,13 +68,13 @@ public class Embroidery {
         int startX=(EmbroideryCreator.WIDTH-width*stitchSize)/2;
         int startY=(EmbroideryCreator.HEIGHT-height*stitchSize)/2;
         drawCanvas(startX, startY, g2);
-        drawGrid(startX, startY, g2);
+        if(enableGrid) drawGrid(startX, startY, g2);
         drawStitches(startX, startY, g2);
     }
 
     private void drawStitches(int startX, int startY,  Graphics2D g2) {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g2.setStroke(new BasicStroke(stitchOffset, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         for(int i=0; i<height; i++){
             for(int j=0; j<width; j++){
                 if(canvas[i][j]!=null)
@@ -118,10 +114,35 @@ public class Embroidery {
     public void onClick(MouseEvent e){
        int col = (e.getX()-(EmbroideryCreator.WIDTH - stitchSize*width)/2)/stitchSize;
        int row = (e.getY()-(EmbroideryCreator.HEIGHT - stitchSize*height)/2)/stitchSize;
-       System.out.println(row+", "+col);
+     //  System.out.println(row+", "+col);
        if(col<0||row<0||col>=width||row>=height) return;
-      if(eraserOn) canvas[row][col]=null;
-      else canvas[row][col]=currentColor;
+       if(eraserOn) canvas[row][col]=null;
+       else canvas[row][col]=currentColor;
+       repaintStitchesOnly();
+    }
+    public void clear(){
+        for(int i=0; i<height; i++)
+            for(int j=0; j<width; j++)
+                canvas[i][j] = null;
+        repaintStitchesOnly();
+    }
+    private void repaintStitchesOnly(){
+        appPanel.repaint((EmbroideryCreator.WIDTH-MAX_WIDTH)/2, (EmbroideryCreator.HEIGHT-MAX_HEIGHT)/2, MAX_WIDTH, MAX_HEIGHT);
+    }
+
+    public void switchGrid(){
+        this.enableGrid=!enableGrid;
+        repaintStitchesOnly();
     }
     private Random r = new Random();
+
+    public void switchEraser() {
+        this.eraserOn=!eraserOn;
+    }
+    public boolean isEraserOn() {
+        return eraserOn;
+    }
+    public boolean isEnableGrid() {
+        return enableGrid;
+    }
 }

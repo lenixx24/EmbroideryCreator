@@ -11,6 +11,7 @@ import javax.swing.*;
 
 public class AppPanel extends JPanel implements MouseListener {
     private Embroidery embroidery;
+    private UI ui;
     private BufferedImage background;
     public AppPanel() {
         setPanel();
@@ -21,10 +22,16 @@ public class AppPanel extends JPanel implements MouseListener {
             throw new RuntimeException(e);
         }
         setUpCanvas();
+        setUpUI();
+    }
+
+    private void setUpUI() {
+        this.setLayout(null);
+        ui = new UI(this);
     }
 
     private void setUpCanvas() {
-        embroidery= new Embroidery(40, 20);
+        embroidery= new Embroidery(this, 30, 30);
     }
 
     private void setPanel() {
@@ -36,17 +43,18 @@ public class AppPanel extends JPanel implements MouseListener {
         g.drawImage(background, 0, 0, EmbroideryCreator.WIDTH, EmbroideryCreator.HEIGHT, null);
         embroidery.draw(g);
     }
-
+    public Embroidery getEmbroidery(){
+        return embroidery;
+    }
     @Override
     public void mouseClicked(MouseEvent e) {
         embroidery.onClick(e);
-        repaint();
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-       /* embroidery.onClick(e);
-        repaint();*/
+       embroidery.onClick(e);
+
     }
 
     @Override
