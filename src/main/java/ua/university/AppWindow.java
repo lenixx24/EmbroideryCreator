@@ -14,7 +14,7 @@ public class AppWindow {
         jframe = new JFrame();
         ImageIcon im = new ImageIcon("src/main/resources/icon.png");
         jframe.setIconImage(im.getImage());
-        jframe.setTitle("Ukrainian embroidery creator");
+        jframe.setTitle("Ukrainian embroidery creator made by Shepetiuk Angelina");
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jframe.add(appPanel);
         jframe.setResizable(false);

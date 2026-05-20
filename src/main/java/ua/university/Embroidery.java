@@ -1,5 +1,6 @@
 package ua.university;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -12,28 +13,34 @@ public class Embroidery {
     public final int MAX_WIDTH = EmbroideryCreator.WIDTH*5/8;
     public final int MAX_HEIGHT = EmbroideryCreator.HEIGHT*5/8;
     public final int DEFAULT_STITCH_SIZE=15;
+    public final static int NO_SYMMETRY=0, VERTICAL_SYMMETRY=1,
+            HORIZONTAL_SYMMETRY=2, CENTRAL_SYMMETRY=3;
     public final float BORDER_WIDTH=4;
     public final Color BEIGE = new Color(250, 240, 230);
     private Color currentColor = Color.RED;
     private boolean eraserOn=false;
     private boolean enableGrid=true;
-    private int width;
-    private int height;
-    private int stitchSize;
-    private int stitchOffset;
+    private int currentSymmetryMode=NO_SYMMETRY;
+    private int width, height;
+    private int stitchSize, stitchOffset;
     private Color[][] canvas;
     public Embroidery (AppPanel appPanel,  int width, int height){
         this.appPanel=appPanel;
        this.width= width;
        this.height=height;
        // if(width*stitchSize>MAX_WIDTH||height*stitchSize>MAX_HEIGHT)
-        stitchSize = width>height? MAX_WIDTH/width: MAX_HEIGHT/height;
-        stitchOffset = (int) (stitchSize*0.25);
         setupCanvas();
 
 
     }
+
+    private void countStitchVars() {
+        stitchSize = width>height? MAX_WIDTH/width: MAX_HEIGHT/height;
+        stitchOffset = (int) (stitchSize*0.25);
+    }
+
     private void setupCanvas(){
+        countStitchVars();
         loadFromFile( "src/main/resources/vyshyvanka_40x20.txt");
     }
     public void loadFromFile(String filePath){
@@ -114,10 +121,27 @@ public class Embroidery {
     public void onClick(MouseEvent e){
        int col = (e.getX()-(EmbroideryCreator.WIDTH - stitchSize*width)/2)/stitchSize;
        int row = (e.getY()-(EmbroideryCreator.HEIGHT - stitchSize*height)/2)/stitchSize;
-     //  System.out.println(row+", "+col);
+       int reversedCol=width-1-col;
+       int reversedRow=height-1-row;
+      //System.out.println(row+", "+col+ "reversed: "+reversedRow+", "+reversedCol);
        if(col<0||row<0||col>=width||row>=height) return;
-       if(eraserOn) canvas[row][col]=null;
-       else canvas[row][col]=currentColor;
+       if(eraserOn) currentColor=null;
+       else currentColor = appPanel.getUi().getPickColor().getBackground();
+       canvas[row][col]=currentColor;
+       switch (currentSymmetryMode){
+           case VERTICAL_SYMMETRY -> {
+                canvas[row][reversedCol]=currentColor;
+           }
+           case HORIZONTAL_SYMMETRY -> {
+                canvas[reversedRow][col]=currentColor;
+           }
+           case CENTRAL_SYMMETRY -> {
+               canvas[reversedRow][reversedCol]=currentColor;
+                   canvas[reversedRow][col]=currentColor;
+                   canvas[row][reversedCol]=currentColor;
+           }
+       }
+
        repaintStitchesOnly();
     }
     public void clear(){
@@ -135,7 +159,12 @@ public class Embroidery {
         repaintStitchesOnly();
     }
     private Random r = new Random();
-
+public void setCurrentColor(Color color){
+    this.currentColor=color;
+}
+    public Color getCurrentColor() {
+        return currentColor;
+    }
     public void switchEraser() {
         this.eraserOn=!eraserOn;
     }
@@ -145,4 +174,61 @@ public class Embroidery {
     public boolean isEnableGrid() {
         return enableGrid;
     }
+
+    public int getCurrentSymmetryMode() {
+        return currentSymmetryMode;
+    }
+
+    public void setCurrentSymmetryMode(int currentSymmetryMode) {
+        this.currentSymmetryMode = currentSymmetryMode;
+       // System.out.println(currentSymmetryMode);
+    }
+    public void flipVert(){
+            Color temp;
+            for(int i=0; i<height; i++)
+                for(int j=0; j<width/2; j++){
+                    temp=canvas[i][j];
+                    canvas[i][j] = canvas[i][width-1-j];
+                    canvas[i][width-1-j]=temp;
+                }
+            repaintStitchesOnly();
+    }
+    public void flipHoriz(){
+        //horizontal
+        Color temp;
+        for(int i=0; i<height/2; i++)
+            for(int j=0; j<width; j++){
+                temp=canvas[i][j];
+                canvas[i][j] = canvas[height-1-i][j];
+                canvas[height-1-i][j]=temp;
+            }
+        repaintStitchesOnly();
+    }
+    public  void duplicateVert(){
+        Color[][] colorsTemp = new Color[height*2][width];
+        for(int i=0; i<height; i++)
+            for(int j=0; j<width; j++){
+                colorsTemp[i][j]=canvas[i][j];
+                colorsTemp[i+height][j]=canvas[i][j];
+            }
+        this.height*=2;
+        canvas=colorsTemp;
+        countStitchVars();
+        repaintStitchesOnly();
+       // appPanel.repaint();
+    }
+    public  void duplicateHoriz(){
+        Color[][] colorsTemp = new Color[height][width*2];
+        for(int i=0; i<height; i++)
+            for(int j=0; j<width; j++){
+                colorsTemp[i][j]=canvas[i][j];
+                colorsTemp[i][j+width]=canvas[i][j];
+            }
+        this.width*=2;
+        canvas=colorsTemp;
+        countStitchVars();
+        repaintStitchesOnly();
+        // appPanel.repaint();
+    }
+
 }
