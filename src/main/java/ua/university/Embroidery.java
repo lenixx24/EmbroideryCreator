@@ -43,31 +43,25 @@ public class Embroidery {
     }
 
     private void setupCanvas(){
+        loadFromFile( "AngelinaEmbroidery");
         countStitchVars();
-        loadFromFile( "src/main/resources/Angelina_31x31.txt");
-    }
-    public void loadFromFile(String filePath){
-        canvas = new Color[height][width];
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            int y = 0;
-            while ((line = br.readLine()) != null && y < height) {
-                String[] pixels = line.trim().split(" ");
-                for (int x = 0; x < Math.min(width, pixels.length); x++) {
-                    String[] rgb = pixels[x].split(",");
-                    int r = Integer.parseInt(rgb[0]);
-                    int g = Integer.parseInt(rgb[1]);
-                    int b = Integer.parseInt(rgb[2]);
-                    canvas[y][x] = new Color(r, g, b);
-                }
-                y++;
-            }
-            System.out.println("File Color[" + height + "][" + width + "] was read successfully");
 
+    }
+    public void loadFromFile(String fileName){
+
+        try {
+            BufferedImage image = ImageIO.read(new File("src/main/saves/"+fileName+".png"));
+            height=image.getHeight()/DEFAULT_STITCH_SIZE;
+            width=image.getWidth()/DEFAULT_STITCH_SIZE;
+            canvas = new Color[height][width];
+            for(int i=0; i<height; i++){
+                for(int j=0; j<width; j++){
+                    canvas[i][j]=new Color(
+                            image.getRGB(j*DEFAULT_STITCH_SIZE+DEFAULT_STITCH_SIZE/2, i*DEFAULT_STITCH_SIZE+DEFAULT_STITCH_SIZE/2));
+                }
+            }
         } catch (IOException e) {
-            System.err.println("File reading error: " + e.getMessage());
-        } catch (NumberFormatException e) {
-            System.err.println("Wrong format: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
     public void saveToFile(String name){

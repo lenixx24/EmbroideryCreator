@@ -33,7 +33,7 @@ public class AppPanel extends JPanel implements MouseListener, MouseMotionListen
     }
 
     private void setUpCanvas() {
-        embroidery= new Embroidery(this, 30, 30);
+        embroidery= new Embroidery(this, 50, 50);
     }
 
     private void setPanel() {
