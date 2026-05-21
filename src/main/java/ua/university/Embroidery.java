@@ -5,9 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Random;
 
@@ -31,10 +29,15 @@ public class Embroidery {
         this.appPanel=appPanel;
        this.width= width;
        this.height=height;
-       // if(width*stitchSize>MAX_WIDTH||height*stitchSize>MAX_HEIGHT)
-        setupCanvas();
+       canvas=new Color[height][width];
+       countStitchVars();
+    }
 
 
+    public Embroidery (AppPanel appPanel,  String filePath){
+        this.appPanel=appPanel;
+        loadFromFile(filePath);
+        countStitchVars();
     }
 
     private void countStitchVars() {
@@ -42,22 +45,20 @@ public class Embroidery {
         stitchOffset = (int) (stitchSize*0.25);
     }
 
-    private void setupCanvas(){
-        loadFromFile( "AngelinaEmbroidery");
-        countStitchVars();
-
-    }
     public void loadFromFile(String fileName){
 
         try {
-            BufferedImage image = ImageIO.read(new File("src/main/saves/"+fileName+".png"));
+            BufferedImage image = ImageIO.read(new File(fileName));
             height=image.getHeight()/DEFAULT_STITCH_SIZE;
             width=image.getWidth()/DEFAULT_STITCH_SIZE;
             canvas = new Color[height][width];
+            Color c;
             for(int i=0; i<height; i++){
                 for(int j=0; j<width; j++){
-                    canvas[i][j]=new Color(
-                            image.getRGB(j*DEFAULT_STITCH_SIZE+DEFAULT_STITCH_SIZE/2, i*DEFAULT_STITCH_SIZE+DEFAULT_STITCH_SIZE/2));
+                    c= new Color(image.getRGB(j*DEFAULT_STITCH_SIZE+DEFAULT_STITCH_SIZE/2,
+                            i*DEFAULT_STITCH_SIZE+DEFAULT_STITCH_SIZE/2));
+                    if(c.equals(BEIGE)) c=null;
+                    canvas[i][j]=c;
                 }
             }
         } catch (IOException e) {
@@ -151,7 +152,7 @@ public class Embroidery {
       //System.out.println(row+", "+col+ "reversed: "+reversedRow+", "+reversedCol);
        if(col<0||row<0||col>=width||row>=height) return;
        if(eraserOn) currentColor=null;
-       else currentColor = appPanel.getUi().getPickColor().getBackground();
+       else currentColor = appPanel.getAppUI().getPickColor().getBackground();
        canvas[row][col]=currentColor;
        switch (currentSymmetryMode){
            case VERTICAL_SYMMETRY -> {
