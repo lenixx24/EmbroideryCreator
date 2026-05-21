@@ -1,6 +1,7 @@
 package ua.university;
 
 import javax.swing.*;
+import javax.swing.plaf.BorderUIResource;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -14,9 +15,10 @@ public class UI {
     private int buttonsAmount;
     AppPanel appPanel;
     JCheckBox eraser, grid;
-    JButton clear, pickColor, vertFlip, horizFlip, horizDuplicate, vertDuplicate;
-    JLabel pickColorLabel, symmetryModeLabel, duplicateLabel;
+    JButton clear, pickColor, vertFlip, horizFlip, horizDuplicate, vertDuplicate, saveToFile;
+    JLabel pickColorLabel, symmetryModeLabel, duplicateLabel, enterFileNameLabel;
     JComboBox<String> symmetryMode;
+    JTextField enterFileName;
     String[] symmetryOptions;
     private Color selectedColor;
     public UI(AppPanel appPanel){
@@ -86,6 +88,23 @@ public class UI {
         setupComponentFontAndBounds(duplicateLabel,
                 horizDuplicate.getX()-35, BUTTON_Y-25, 110, BUTTON_HEIGHT);
 
+        enterFileName=new JTextField();
+        setupComponentFontAndBounds(enterFileName, 300, 90, 200, 30);
+        enterFileName.addActionListener(e->saveToFile());
+        enterFileNameLabel = new JLabel("Введіть ім'я файлу");
+        setupComponentFontAndBounds(enterFileNameLabel,
+                enterFileName.getX()-10, enterFileName.getY()-30, 325, 65);
+        enterFileNameLabel.setFont(enterFileNameLabel.getFont().deriveFont(15f));
+
+        enterFileNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        enterFileNameLabel.setVerticalAlignment(SwingConstants.NORTH);
+        enterFileNameLabel.setOpaque(true);
+        enterFileNameLabel.setBackground(Color.WHITE);
+        saveToFile = new JButton("Зберегти");
+        setupComponentFontAndBounds(saveToFile,
+                enterFileName.getX()+enterFileName.getWidth()+5, enterFileName.getY(), 100, enterFileName.getHeight());
+        saveToFile.addActionListener(e->saveToFile());
+
         addGameMenuButtons();
     }
     private void setupComponentFontAndBounds(Component c, int x, int y, int width, int height){
@@ -114,6 +133,9 @@ public class UI {
         appPanel.add(horizDuplicate);
         appPanel.add(vertDuplicate);
         appPanel.add(duplicateLabel);
+        appPanel.add(enterFileName);
+        appPanel.add(saveToFile);
+        appPanel.add(enterFileNameLabel);
     }
     private void pickColor(){
         selectedColor = JColorChooser.showDialog(null,
@@ -127,7 +149,7 @@ public class UI {
     private void confirmClearing(){
         int response = JOptionPane.showConfirmDialog(
                 null,
-                "Ви точно хочете очистити полотно?",
+                "Ви точно хочете очистити полотно?\nНе збережену вишивку буде втрачено",
                 "Оберіть варіант",
                 JOptionPane.YES_NO_OPTION
         );
@@ -160,7 +182,15 @@ public class UI {
             e.printStackTrace();
         }
     }
-
+    private void saveToFile(){
+       String fileName = enterFileName.getText();
+       if(fileName.matches("^[^\\\\/:*?\"<.>|]+$"))
+        appPanel.getEmbroidery().saveToFile(fileName);
+       else {
+           enterFileName.setText("");
+           JOptionPane.showMessageDialog(null, "Назва файлу містить заборонені символи", "Помилка", JOptionPane.ERROR_MESSAGE);
+       }
+    }
     public JButton getPickColor() {
         return pickColor;
     }

@@ -1,9 +1,12 @@
 package ua.university;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Random;
@@ -41,7 +44,7 @@ public class Embroidery {
 
     private void setupCanvas(){
         countStitchVars();
-        loadFromFile( "src/main/resources/vyshyvanka_40x20.txt");
+        loadFromFile( "src/main/resources/Angelina_31x31.txt");
     }
     public void loadFromFile(String filePath){
         canvas = new Color[height][width];
@@ -68,6 +71,34 @@ public class Embroidery {
         }
     }
     public void saveToFile(String name){
+        try {
+            int fileWidth = DEFAULT_STITCH_SIZE*width;
+            int fileHeight = DEFAULT_STITCH_SIZE*height;
+            BufferedImage bufferedImage = new BufferedImage(fileWidth, fileHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = bufferedImage.createGraphics();
+            g2d.setColor(BEIGE);
+            g2d.fillRect(0, 0, fileWidth, fileHeight);
+            stitchSize=DEFAULT_STITCH_SIZE;
+            stitchOffset = (int) (stitchSize*0.25);
+            if(enableGrid) drawGrid(0, 0, g2d);
+            drawStitches(0,0, g2d);
+            g2d.dispose();
+            countStitchVars();
+            File file = new File("src/main/saves/"+name+".png");
+            ImageIO.write(bufferedImage, "png", file);
+
+            JOptionPane.showMessageDialog(
+                    null,
+                    "Вишивку збережено в "+file.getPath(),
+                    "Успіх!",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Виникла помилка при збереженні", "Помилка", JOptionPane.ERROR_MESSAGE);
+
+        }
+
+
 
     }
     public void draw(Graphics g){
@@ -174,11 +205,6 @@ public void setCurrentColor(Color color){
     public boolean isEnableGrid() {
         return enableGrid;
     }
-
-    public int getCurrentSymmetryMode() {
-        return currentSymmetryMode;
-    }
-
     public void setCurrentSymmetryMode(int currentSymmetryMode) {
         this.currentSymmetryMode = currentSymmetryMode;
        // System.out.println(currentSymmetryMode);
