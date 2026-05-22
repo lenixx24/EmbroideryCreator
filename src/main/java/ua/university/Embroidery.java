@@ -14,6 +14,7 @@ public class Embroidery {
     public final int MAX_WIDTH = EmbroideryCreator.WIDTH*5/8;
     public final int MAX_HEIGHT = EmbroideryCreator.HEIGHT*5/8;
     public final int DEFAULT_STITCH_SIZE=15;
+    public final int Y_OFFSET=50;
     public final static int NO_SYMMETRY=0, VERTICAL_SYMMETRY=1,
             HORIZONTAL_SYMMETRY=2, CENTRAL_SYMMETRY=3;
     public final float BORDER_WIDTH=4;
@@ -99,7 +100,7 @@ public class Embroidery {
     public void draw(Graphics g){
         Graphics2D g2 = (Graphics2D) g;
         int startX=(EmbroideryCreator.WIDTH-width*stitchSize)/2;
-        int startY=(EmbroideryCreator.HEIGHT-height*stitchSize)/2;
+        int startY= Y_OFFSET;//(EmbroideryCreator.HEIGHT-height*stitchSize)/2;
         drawCanvas(startX, startY, g2);
         if(enableGrid) drawGrid(startX, startY, g2);
         drawStitches(startX, startY, g2);
@@ -121,8 +122,7 @@ public class Embroidery {
         g2.fillRect(x, y, width*stitchSize, height*stitchSize);
         g2.setStroke(new BasicStroke(BORDER_WIDTH*2));
         g2.setColor(Color.BLACK);
-        g2.drawRect((int)(x-BORDER_WIDTH), (int)(y-BORDER_WIDTH),
-                width*stitchSize+(int)BORDER_WIDTH*2, height*stitchSize+(int)BORDER_WIDTH*2);
+        g2.drawRect((int)(x-BORDER_WIDTH), (int)(y-BORDER_WIDTH),width*stitchSize+(int)BORDER_WIDTH*2, height*stitchSize+(int)BORDER_WIDTH*2);
     }
     public void drawGrid(int x, int y, Graphics2D g2){g2.setStroke(new BasicStroke(1.5f));
        g2.setColor(Color.BLACK);
@@ -145,8 +145,9 @@ public class Embroidery {
         };
     }
     public void onClick(MouseEvent e){
+      //  System.out.println(e.getPoint());
        int col = (e.getX()-(EmbroideryCreator.WIDTH - stitchSize*width)/2)/stitchSize;
-       int row = (e.getY()-(EmbroideryCreator.HEIGHT - stitchSize*height)/2)/stitchSize;
+       int row = (e.getY()-Y_OFFSET)/stitchSize;
        int reversedCol=width-1-col;
        int reversedRow=height-1-row;
       //System.out.println(row+", "+col+ "reversed: "+reversedRow+", "+reversedCol);
@@ -177,7 +178,8 @@ public class Embroidery {
         repaintStitchesOnly();
     }
     private void repaintStitchesOnly(){
-        appPanel.repaint((EmbroideryCreator.WIDTH-MAX_WIDTH)/2, (EmbroideryCreator.HEIGHT-MAX_HEIGHT)/2, MAX_WIDTH, MAX_HEIGHT);
+
+        appPanel.repaint((EmbroideryCreator.WIDTH-MAX_WIDTH)/2, Y_OFFSET-10, MAX_WIDTH, MAX_HEIGHT+10);
     }
 
     public void switchGrid(){
@@ -249,7 +251,6 @@ public void setCurrentColor(Color color){
         canvas=colorsTemp;
         countStitchVars();
         repaintStitchesOnly();
-        // appPanel.repaint();
     }
 
 }

@@ -14,28 +14,29 @@ public class AppPanel extends JPanel implements MouseListener, MouseMotionListen
     private Embroidery embroidery;
     private AppUI appUI;
     private MainUI mainUI;
-    private final BufferedImage background;
+    private JFrame appFrame;
     private int gameState=0;
-    public AppPanel() {
+    public AppPanel(JFrame appFrame) {
+        this.appFrame=appFrame;
         setPanel();
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
-        try {
-            background = ImageIO.read(Objects.requireNonNull(getClass().getResource("/background.png")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        setUpUI();
-
+        setUI();
     }
 
-    private void setUpUI() {
-        this.setLayout(null);
-        mainUI = new MainUI(this);
+    private void setUI() {
+        mainUI = new MainUI(this, appFrame);
+
+        mainUI.setup();
+        appUI = new AppUI(this, appFrame );
     }
 
-    public void setAppUI(AppUI appUI) {
-        this.appUI = appUI;
+    public void setAppUI() {
+        appUI.setup();
+        appUI.setComponentsPosition();
+        appUI.addButtons();
+        this.repaint();
+        appFrame.repaint();
     }
 
     public void setUpCanvas(int w, int h) {
@@ -48,24 +49,29 @@ public class AppPanel extends JPanel implements MouseListener, MouseMotionListen
     private void setPanel() {
         Dimension size = new Dimension(EmbroideryCreator.WIDTH, EmbroideryCreator.HEIGHT);
         setPreferredSize(size);
+        appFrame.add(this);
+        appFrame.setResizable(false);
+        appFrame.pack();
+        appFrame.setLocationRelativeTo(null);
+        appFrame.setVisible(true);
     }
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(background, 0, 0, EmbroideryCreator.WIDTH, EmbroideryCreator.HEIGHT, null);
         if(gameState==0) {
-            mainUI.addButtons();
+            if(mainUI!=null) {
+                EmbroideryCreator.drawBackground(g);
+                mainUI.addButtons();
+            }
+
         }
         else if(gameState==1)
             drawApp(g);
         }
     private void drawApp(Graphics g){
-        g.fillRect(0,5+(EmbroideryCreator.HEIGHT+embroidery.MAX_HEIGHT)/2, EmbroideryCreator.WIDTH, appUI.BUTTON_HEIGHT *2+10);
-        g.setColor(Color.WHITE);
-        g.fillRect(0,10+(EmbroideryCreator.HEIGHT+embroidery.MAX_HEIGHT)/2, EmbroideryCreator.WIDTH, appUI.BUTTON_HEIGHT *2);
-        embroidery.draw(g);
-    }
-    private void drawMenu(Graphics g){
-
+    EmbroideryCreator.drawBackground(g);
+    g.setColor(Color.BLACK);
+    g.fillRect(0,EmbroideryCreator.HEIGHT-115-80, EmbroideryCreator.WIDTH, appUI.BUTTON_HEIGHT *2+10);
+       embroidery.draw(g);
     }
     public Embroidery getEmbroidery(){
         return embroidery;
