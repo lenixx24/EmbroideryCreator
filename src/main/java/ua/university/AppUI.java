@@ -162,7 +162,6 @@ public class AppUI extends UI {
         filePanel.add(saveToFile,0);
         filePanel.add(enterFileNameLabel);
         filePanel.add(backToMenu);
-        System.out.println("appui");
         appFrame.revalidate();
         appFrame.repaint();
     }

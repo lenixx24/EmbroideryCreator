@@ -3,6 +3,7 @@ package ua.university;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.File;
 
 public class MainUI extends UI{
@@ -33,7 +34,6 @@ public class MainUI extends UI{
 
     }
     public void addButtons() {
-        System.out.println("fhld");
         appPanel.add(exit, 0);
         appPanel.add(newCanvas, 0);
         appPanel.add(loadFile, 0);
@@ -49,14 +49,18 @@ public class MainUI extends UI{
     private void showSizeChooser(JFrame jFrame) {
         SpinnerNumberModel widthModel = new SpinnerNumberModel(30, 5, 50, 5);
         SpinnerNumberModel heightModel = new SpinnerNumberModel(30, 5, 50, 5);
-
         JSpinner widthSpinner = new JSpinner(widthModel);
         JSpinner heightSpinner = new JSpinner(heightModel);
-        JPanel panel = new JPanel(new GridLayout(2, 2, 5, 10));
+        JButton defaultButton = new JButton("Полотно за замовчуванням");
+
+        JPanel panel = new JPanel(new GridLayout(3, 2, 5, 10));
+        defaultButton.addActionListener(this::defaultCanvas);
         panel.add(new JLabel("Ширина (5-50):"));
         panel.add(widthSpinner);
         panel.add(new JLabel("Висота (5-50):"));
         panel.add(heightSpinner);
+        panel.add(new JLabel(""));
+        panel.add(defaultButton);
         int result = JOptionPane.showConfirmDialog(
                 jFrame,
                 panel,
@@ -92,4 +96,13 @@ public class MainUI extends UI{
         }
 
     }
+    private void defaultCanvas(ActionEvent e){
+        appPanel.setUpCanvas("src/main/saves/AngelinaEmbroidery.png");
+        goToApp();
+        Component component = (Component) e.getSource();
+        Window window = SwingUtilities.getWindowAncestor(component);
+
+        if (window != null) {
+            window.dispose();
+    }}
 }

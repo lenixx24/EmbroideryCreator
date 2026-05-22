@@ -109,12 +109,12 @@ public class Embroidery {
     private void drawStitches(int startX, int startY,  Graphics2D g2) {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setStroke(new BasicStroke(stitchOffset, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        for(int i=0; i<height; i++){
-            for(int j=0; j<width; j++){
-                if(canvas[i][j]!=null)
-                    drawStitch(startX+j*stitchSize, startY+i*stitchSize, stitchSize, canvas[i][j], g2);
+            for(int i=0; i<height; i++){
+                for(int j=0; j<width; j++){
+                    if(canvas[i][j]!=null)
+                        drawStitch(startX+j*stitchSize, startY+i*stitchSize, stitchSize, canvas[i][j], g2);
+                }
             }
-        }
     }
 
     public void drawCanvas(int x, int y, Graphics2D g2){
