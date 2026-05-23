@@ -5,6 +5,8 @@ import java.awt.*;
 import java.util.Objects;
 
 public class AppUI extends UI {
+    public static final int BOTTOM_HEIGHT=110;
+    public static final int TOP_HEIGHT=80;
     JCheckBox eraser, grid;
     JButton clear, pickColor, vertFlip, horizFlip, horizDuplicate, vertDuplicate,
             saveToFile, backToMenu;
@@ -21,14 +23,14 @@ public class AppUI extends UI {
 
         uiPanel = new JPanel();
         uiPanel.setLayout(null);
-        uiPanel.setPreferredSize(new Dimension(EmbroideryCreator.WIDTH, 110));
+        uiPanel.setPreferredSize(new Dimension(EmbroideryCreator.WIDTH, BOTTOM_HEIGHT));
         uiPanel.setOpaque(true);
         appFrame.add(uiPanel, BorderLayout.SOUTH);
         uiPanel.setBackground(Color.white);
         filePanel = new JPanel();
         filePanel.setLayout(null);
-        filePanel.setPreferredSize(new Dimension(EmbroideryCreator.WIDTH, 80));
-        filePanel.setOpaque(true);
+        filePanel.setPreferredSize(new Dimension(EmbroideryCreator.WIDTH, TOP_HEIGHT));
+        filePanel.setBackground(Color.WHITE);
         appFrame.add(filePanel, BorderLayout.NORTH);
         clear= new JButton("Очистити");
         clear.addActionListener(e -> confirmClearing());
@@ -77,7 +79,7 @@ public class AppUI extends UI {
 
         enterFileNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
         enterFileNameLabel.setVerticalAlignment(SwingConstants.NORTH);
-        enterFileNameLabel.setOpaque(true);
+      //  enterFileNameLabel.setOpaque(true);
        // enterFileNameLabel.setBackground(Color.WHITE);
         saveToFile = new JButton("Зберегти");
         saveToFile.addActionListener(e->saveToFile());
