@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="EmbroideryCreator:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/EmbroideryCreator_jar</output-path>
+    <root id="archive" name="EmbroideryCreator.jar">
+      <element id="module-output" name="EmbroideryCreator" />
+    </root>
+  </artifact>
+</component>

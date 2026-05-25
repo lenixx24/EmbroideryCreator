@@ -139,14 +139,6 @@ public class Embroidery {
         g.drawLine(x+stitchOffset, y+stitchOffset, x+size-stitchOffset, y+size-stitchOffset);
         g.drawLine(x+size-stitchOffset, y+stitchOffset, x+stitchOffset, y+size-stitchOffset);
     }
-    private Color getRandomColor(){
-        return switch (r.nextInt(4)) {
-            case 0 -> Color.RED;
-            case 1 -> Color.BLACK;
-            case 2 -> Color.WHITE;
-            default -> null;
-        };
-    }
     public void onClick(MouseEvent e){
       //  System.out.println(e.getPoint());
        int col = (e.getX()-(EmbroideryCreator.WIDTH - stitchSize*width)/2)/stitchSize;
@@ -189,7 +181,6 @@ appPanel.repaint();
         this.enableGrid=!enableGrid;
         repaintStitchesOnly();
     }
-    private Random r = new Random();
 public void setCurrentColor(Color color){
     this.currentColor=color;
 }

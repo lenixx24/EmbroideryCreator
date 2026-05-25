@@ -71,7 +71,6 @@ public class AppPanel extends JPanel implements MouseListener, MouseMotionListen
     EmbroideryCreator.drawBackground(g);
     g.setColor(Color.BLACK);
     g.fillRect(0,EmbroideryCreator.HEIGHT-115-80, EmbroideryCreator.WIDTH, appUI.BUTTON_HEIGHT *2+10);
-       embroidery.draw(g);
        g.setColor(Color.BLACK);
         g.fillRect(0,0, EmbroideryCreator.WIDTH, 5);
         embroidery.draw(g);
